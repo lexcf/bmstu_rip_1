@@ -268,6 +268,8 @@ class UserLoginView(APIView):
         if serializer.is_valid():
             username = request.data['username']
             password = request.data['password']
+            if request.user is not None:
+                logout(request)
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)  # Сохраняем информацию о пользователе в сессии

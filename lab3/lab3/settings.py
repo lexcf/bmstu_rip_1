@@ -170,3 +170,10 @@ SESSION_COOKIE_NAME = "sessionid"
 SESSION_COOKIE_HTTPONLY = False
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3001']
+

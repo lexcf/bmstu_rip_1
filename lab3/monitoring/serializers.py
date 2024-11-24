@@ -19,10 +19,13 @@ class AddImageSerializer(serializers.Serializer):
 
 class RequestSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
+    moderator = serializers.SerializerMethodField()
+
     class Meta:
         model = Request
         fields = ["pk","status","created_at","formed_at","ended_at","username","moderator","final_price"]
-
+    def get_moderator(self, obj):
+        return Request.objects.get(pk=obj.pk).moderator.username
     def get_username(self,obj):
         return Request.objects.get(pk=obj.pk).user.username
 
