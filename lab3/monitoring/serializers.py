@@ -25,7 +25,10 @@ class RequestSerializer(serializers.ModelSerializer):
         model = Request
         fields = ["pk","status","created_at","formed_at","ended_at","username","moderator","final_price"]
     def get_moderator(self, obj):
-        return Request.objects.get(pk=obj.pk).moderator.username
+        request = Request.objects.get(pk=obj.pk)
+        if request.moderator:
+            return request.moderator.username
+        return None
     def get_username(self,obj):
         return Request.objects.get(pk=obj.pk).user.username
 
