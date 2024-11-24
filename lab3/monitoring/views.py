@@ -277,6 +277,8 @@ class UserLoginView(APIView):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)  # Сохраняем информацию о пользователе в сессии
+                if user.is_staff:
+                    return Response({'message': 'Login successful','staff':True}, status=status.HTTP_200_OK)
                 return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
             else:
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
