@@ -318,9 +318,9 @@ class ListRequests(APIView):
                 requests = Request.objects.exclude(status='draft')
         else:
             if 'date' in request.GET and 'status' in request.GET:
-                requests = Request.objects.filter(formed_at__gte=request.GET['date'],status=request.GET['status'],user=request.user)
+                requests = Request.objects.filter(formed_at__gte=request.GET['date'],status=request.GET['status'],user=request.user).exclude(status='deleted')
             else:
-                requests = Request.objects.filter(user=request.user)
+                requests = Request.objects.filter(user=request.user).exclude(status='deleted')
 
         
         req_serializer = RequestSerializer(requests,many=True)
