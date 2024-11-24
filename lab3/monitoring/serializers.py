@@ -131,11 +131,15 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name')
+#class UserUpdateSerializer(serializers.ModelSerializer):
+#    class Meta:
+#        model = User
+#        fields = ('username', 'email', 'first_name', 'last_name')
 
+class UserUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+       model = User
+       fields = ('email', 'password')
 
 class AuthTokenSerializer(serializers.Serializer):
     username = serializers.CharField()

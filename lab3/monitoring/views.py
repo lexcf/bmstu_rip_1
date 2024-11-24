@@ -238,7 +238,11 @@ class UserUpdateView(APIView):
     def put(self, request):
         serializer = UserUpdateSerializer(instance=request.user, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            if 'password' in request.data:
+                request.user.set_password(request.data['password'])
+            if 'email' in request.data:
+                request.user.email = request.data['email']
+            request.user.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
