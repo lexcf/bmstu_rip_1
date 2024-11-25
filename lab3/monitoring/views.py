@@ -490,8 +490,8 @@ class EditRequestThreat(APIView):
         responses={200: "Price updated successfully", 400: "Bad request"}
     )
     def put(self,request,pk):
-        if not request.user.is_staff:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        #if not request.user.is_staff:
+        #    return Response(status=status.HTTP_403_FORBIDDEN)
         if 'threat_id' in request.data and 'price' in request.data:
             record = get_object_or_404(RequestThreat, request=pk,threat=request.data['threat_id'])
             record.price = request.data['price']
