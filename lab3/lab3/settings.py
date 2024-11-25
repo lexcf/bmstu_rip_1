@@ -183,14 +183,12 @@ SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = None
-# CORS_ALLOW_CREDENTIALS = True  # Разрешаем передачу кук
-# CORS_ALLOW_ALL_HEADERS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3001",
+# ]
 
-#CORS_ALLOW_ALL_ORIGINS = True  # Разрешить запросы с любых доменов
-CORS_ALLOW_HEADERS = ["*"]  # Разрешить все пользовательские заголовки
-CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]  # Разрешить методы
-CORS_ALLOW_CREDENTIALS = True  # Если используются cookies или авторизация
+# #CORS_ALLOW_ALL_ORIGINS = True  # Разрешить запросы с любых доменов
+# CORS_ALLOW_HEADERS = ["*"]  # Разрешить все пользовательские заголовки
+# CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]  # Разрешить методы
+# CORS_ALLOW_CREDENTIALS = True  # Если используются cookies или авторизация

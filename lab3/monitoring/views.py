@@ -160,9 +160,11 @@ class AddThreatView(APIView):
         # получаем id заявки
         request_id = Request.objects.filter(user=request.user,status='draft').first().pk
         if Threat.objects.filter(pk=pk).exists():
+            threat = Threat.objects.get(pk=pk)
             new_req_threat = RequestThreat()
             new_req_threat.threat_id = pk
             new_req_threat.request_id = request_id
+            new_req_threat.price = threat.price
             if 'price' in request.data:
                 new_req_threat.price = request.data["price"]
             new_req_threat.save()
