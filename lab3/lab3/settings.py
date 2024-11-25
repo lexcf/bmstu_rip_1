@@ -168,12 +168,29 @@ CACHES = {
 
 SESSION_COOKIE_NAME = "sessionid"
 SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_NAME
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-]
+#CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3001",
+#     "http://localhost:3000",
+# ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3001']
 
+
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = None
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = None
+# CORS_ALLOW_CREDENTIALS = True  # Разрешаем передачу кук
+# CORS_ALLOW_ALL_HEADERS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3001",
+]
+
+#CORS_ALLOW_ALL_ORIGINS = True  # Разрешить запросы с любых доменов
+CORS_ALLOW_HEADERS = ["*"]  # Разрешить все пользовательские заголовки
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]  # Разрешить методы
+CORS_ALLOW_CREDENTIALS = True  # Если используются cookies или авторизация
