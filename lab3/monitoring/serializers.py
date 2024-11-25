@@ -79,12 +79,16 @@ class ThreatListSerializer(serializers.ModelSerializer):
 
 class ThreatListInRequestSerializer(serializers.ModelSerializer):
     comment = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
     class Meta:
         model = Threat
         fields = ["pk","threat_name","short_description","status","img_url","price","comment","company_name"]
 
     def get_comment(self, obj):
         return RequestThreat.objects.get(threat_id=obj.pk,request_id=self.context['req_id']).comment
+    
+    def get_price(self, obj):
+        return RequestThreat.objects.get(threat_id=obj.pk,request_id=self.context['req_id']).price
 
     def get_fields(self):
         new_fields = OrderedDict()
