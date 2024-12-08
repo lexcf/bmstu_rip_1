@@ -38,16 +38,28 @@ class ThreatList(APIView):
     )
 
     def get(self, request):
-        if 'price_from' in request.GET and 'price_to' in request.GET:
-            threats = self.model_class.objects.filter(price__lte=request.GET['price_to'],price__gte=request.GET['price_from'])
-            if 'name' in request.GET:
-                threats = threats.filter(threat_name__icontains=request.GET['name'])
-        elif 'name' in request.GET:
-            threats = self.model_class.objects.filter(threat_name__icontains=request.GET['name'])
-        else:
-            threats = self.model_class.objects.all()
+
+        if not request.user.is_staff:
+            if 'price_from' in request.GET and 'price_to' in request.GET:
+                threats = self.model_class.objects.filter(status='active',price__lte=request.GET['price_to'],price__gte=request.GET['price_from'])
+                if 'name' in request.GET:
+                    threats = threats.filter(status='active',threat_name__icontains=request.GET['name'])
+            elif 'name' in request.GET:
+                threats = self.model_class.objects.filter(status='active',threat_name__icontains=request.GET['name'])
+            else:
+                threats = self.model_class.objects.filter(status='active')
+        else: 
+            if 'price_from' in request.GET and 'price_to' in request.GET:
+                threats = self.model_class.objects.filter(price__lte=request.GET['price_to'],price__gte=request.GET['price_from'])
+                if 'name' in request.GET:
+                    threats = threats.filter(threat_name__icontains=request.GET['name'])
+            elif 'name' in request.GET:
+                threats = self.model_class.objects.filter(threat_name__icontains=request.GET['name'])
+            else:
+                threats = self.model_class.objects.all()
 
         
+
         serializer = self.serializer_class(threats, many=True)
         resp = serializer.data
         draft_request = False
@@ -491,7 +503,7 @@ class EditRequestThreat(APIView):
     )
     def put(self,request,pk):
         #if not request.user.is_staff:
-        #    return Response(status=status.HTTP_403_FORBIDDEN)
+        #git a    return Response(status=status.HTTP_403_FORBIDDEN)
         if 'threat_id' in request.data and 'price' in request.data:
             record = get_object_or_404(RequestThreat, request=pk,threat=request.data['threat_id'])
             record.price = request.data['price']
