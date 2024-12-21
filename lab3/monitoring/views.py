@@ -39,24 +39,24 @@ class ThreatList(APIView):
 
     def get(self, request):
 
-        if not request.user.is_staff:
-            if 'price_from' in request.GET and 'price_to' in request.GET:
-                threats = self.model_class.objects.filter(status='active',price__lte=request.GET['price_to'],price__gte=request.GET['price_from'])
-                if 'name' in request.GET:
-                    threats = threats.filter(status='active',threat_name__icontains=request.GET['name'])
-            elif 'name' in request.GET:
-                threats = self.model_class.objects.filter(status='active',threat_name__icontains=request.GET['name'])
-            else:
-                threats = self.model_class.objects.filter(status='active')
-        else: 
-            if 'price_from' in request.GET and 'price_to' in request.GET:
-                threats = self.model_class.objects.filter(price__lte=request.GET['price_to'],price__gte=request.GET['price_from'])
-                if 'name' in request.GET:
-                    threats = threats.filter(threat_name__icontains=request.GET['name'])
-            elif 'name' in request.GET:
-                threats = self.model_class.objects.filter(threat_name__icontains=request.GET['name'])
-            else:
-                threats = self.model_class.objects.all()
+        #if not request.user.is_staff:
+        if 'price_from' in request.GET and 'price_to' in request.GET:
+            threats = self.model_class.objects.filter(status='active',price__lte=request.GET['price_to'],price__gte=request.GET['price_from'])
+            if 'name' in request.GET:
+                threats = threats.filter(status='active',threat_name__icontains=request.GET['name'])
+        elif 'name' in request.GET:
+            threats = self.model_class.objects.filter(status='active',threat_name__icontains=request.GET['name'])
+        else:
+            threats = self.model_class.objects.filter(status='active')
+        # else: 
+        #     if 'price_from' in request.GET and 'price_to' in request.GET:
+        #         threats = self.model_class.objects.filter(price__lte=request.GET['price_to'],price__gte=request.GET['price_from'])
+        #         if 'name' in request.GET:
+        #             threats = threats.filter(threat_name__icontains=request.GET['name'])
+        #     elif 'name' in request.GET:
+        #         threats = self.model_class.objects.filter(threat_name__icontains=request.GET['name'])
+        #     else:
+        #         threats = self.model_class.objects.all()
 
         
 
@@ -195,15 +195,14 @@ class ImageView(APIView):
         except Exception as e:
             return {"error": str(e)}
 
-    def add_pic(self, threat, pic):
+    def add_pic(self, img_name, pic):
         client = Minio(           
                 endpoint=settings.AWS_S3_ENDPOINT_URL,
             access_key=settings.AWS_ACCESS_KEY_ID,
             secret_key=settings.AWS_SECRET_ACCESS_KEY,
             secure=settings.MINIO_USE_SSL
         )
-        i = threat.id
-        img_obj_name = f"{i}.png"
+        img_obj_name = f"{img_name}.png"
 
         if not pic:
             return Response({"error": "Нет файла для изображения логотипа."})
@@ -211,9 +210,6 @@ class ImageView(APIView):
 
         if 'error' in result:
             return Response(result)
-
-        threat.img_url = result
-        threat.save()
 
         return Response({"message": "success"})
 
@@ -227,17 +223,18 @@ class ImageView(APIView):
         if not request.user.is_staff:
             return Response(status=status.HTTP_403_FORBIDDEN)
         
-        serializer = AddImageSerializer(data=request.data)
-        if serializer.is_valid():
-            threat = Threat.objects.get(pk=serializer.validated_data['threat_id'])
+        #serializer = AddImageSerializer(data=request.data)
+        if True:
+            #threat = Threat.objects.get(pk=serializer.validated_data['threat_id'])
+            img_name = request.data['img_name']
             pic = request.FILES.get("pic")
-            pic_result = self.add_pic(threat, pic)
+            pic_result = self.add_pic(img_name, pic)
             # Если в результате вызова add_pic результат - ошибка, возвращаем его.
             if 'error' in pic_result.data:    
                 return pic_result
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
     
 
     
@@ -313,7 +310,7 @@ class UserLogoutView(APIView):
 
 
 class ListRequests(APIView):
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_description="Get a list of requests. Optionally filter by date and status.",
@@ -325,16 +322,28 @@ class ListRequests(APIView):
     )
 
     def get(self, request):
+        # if request.user.is_staff:
+        #     if 'date_from' in request.GET and 'date_to' in request.GET and 'status' in request.GET:
+        #         requests = Request.objects.filter(formed_at__gte=request.GET['date_from'],formed_at__lte=request.GET['date_to'],status=request.GET['status']).exclude(formed_at=None).exclude(status='draft').exclude(status='deleted')
+        #     else:
+        #         requests = Request.objects.exclude(status='draft').exclude(status='deleted')
+        # else:
+        #     if 'date' in request.GET and 'status' in request.GET:
+        #         requests = Request.objects.filter(formed_at__gte=request.GET['date'],status=request.GET['status'],user=request.user).exclude(status='deleted')
+        #     else:
+        #         requests = Request.objects.filter(user=request.user).exclude(status='deleted')
+
+
+        requests = Request.objects.exclude(status='deleted')
+        if 'date_from' in request.GET:
+            requests = requests.filter(formed_at__gte=request.GET['date_from'])
+        if 'date_to' in request.GET:
+            requests = requests.filter(formed_at__lte=request.GET['date_to'])
+        if 'status' in request.GET:
+            requests = requests.filter(status=request.GET['status'])
+
         if request.user.is_staff:
-            if 'date' in request.GET and 'status' in request.GET:
-                requests = Request.objects.filter(formed_at__gte=request.GET['date'],status=request.GET['status']).exclude(formed_at=None).exclude(status='draft')
-            else:
-                requests = Request.objects.exclude(status='draft')
-        else:
-            if 'date' in request.GET and 'status' in request.GET:
-                requests = Request.objects.filter(formed_at__gte=request.GET['date'],status=request.GET['status'],user=request.user).exclude(status='deleted')
-            else:
-                requests = Request.objects.filter(user=request.user).exclude(status='deleted')
+            requests = requests.exclude(status='draft')
 
         
         req_serializer = RequestSerializer(requests,many=True)
